@@ -31,11 +31,11 @@
 FROM node:18-alpine as build
 WORKDIR /app
 
-# 👇 Copy package.json from correct folder
+# Copy package.json from correct folder
 COPY LMS-React/frontend/package*.json ./
 RUN npm install
 
-# 👇 Copy the rest of the frontend source
+# Copy the rest of the frontend source
 COPY LMS-React/frontend/ ./
 RUN npm run build
 
