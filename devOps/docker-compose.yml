@@ -96,7 +96,7 @@ services:
       dockerfile: devOps/Dockerfile.backend
     container_name: lms_api
     volumes:
-      - ../LMS:/app
+      - ../LMS/myproject:/app
     ports:
       - "8000:8000"
     environment:
