@@ -67,11 +67,9 @@
 # volumes:
 #   postgres_data:
 
-version: "3.9"
-
 services:
   db:
-    image: postgres:15
+    image: postgres:17
     container_name: postgres_db
     environment:
       POSTGRES_DB: Library
@@ -115,11 +113,17 @@ services:
     command: >
       sh -c "python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   frontend:
     build:
-      context: ../LMS-React/frontend
-      dockerfile: Dockerfile.web
+      context: ..
+      dockerfile: devOps/Dockerfile.frontend
     container_name: lms_frontend
     working_dir: /app
     command: sh -c "npm install && npm run build"
