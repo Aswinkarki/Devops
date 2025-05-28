@@ -97,8 +97,8 @@
 
 services:
   db:
-    image: postgres:17
-    container_name: postgres_db
+    image: postgres:15
+    container_name: aswin_db
     environment:
       POSTGRES_DB: Library
       POSTGRES_USER: postgres
@@ -109,17 +109,17 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       lms_net:
-        ipv4_address: 172.22.0.2
+        ipv4_address: 172.27.0.2
 
   api:
     build:
       context: ..
       dockerfile: devOps/Dockerfile.backend
-    container_name: lms_api
+    container_name: aswin_api
     volumes:
       - ../LMS/myproject:/app
     ports:
-      - "8000:8000"
+      - "5000:5000"
     environment:
       - DJANGO_SETTINGS_MODULE=myproject.settings
       - DB_NAME=Library
@@ -129,34 +129,34 @@ services:
       - DB_PORT=5432
     networks:
       lms_net:
-        ipv4_address: 172.22.0.3
+        ipv4_address: 172.27.0.3
     depends_on:
       - db
     command: >
       sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+             python manage.py runserver 0.0.0.0:5000"
 
   frontend:
     build:
       context: ..
       dockerfile: devOps/Dockerfile.frontend
-    container_name: lms_frontend
+    container_name: aswin_frontend
     ports:
       - "8080:80"
     networks:
       lms_net:
-        ipv4_address: 172.22.0.4
+        ipv4_address: 172.27.0.4
     depends_on:
       - api
 
   nginx:
     image: nginx:stable
-    container_name: nginx_gateway
+    container_name: aswin_gateway
     ports:
-      - "80:80"
+      - "5009:80"
     networks:
       lms_net:
-        ipv4_address: 172.22.0.5
+        ipv4_address: 172.27.0.5
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ../LMS-React/frontend/dist:/usr/share/nginx/html
@@ -172,4 +172,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.22.0.0/16
+        - subnet: 172.27.0.0/16
