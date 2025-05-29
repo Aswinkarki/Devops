@@ -1,50 +1,34 @@
 stages:
-  - build
-  - push
   - deploy
 
-variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
-  REPO: aswinkarki
-  TAG: latest
-
-services:
-  - docker:dind
-
-before_script:
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-
-build_images:
-  stage: build
-  script:
-    - docker build -t $REPO/db:$TAG -f devOps/Dockerfile.db .
-    - docker build -t $REPO/api:$TAG -f devOps/Dockerfile.backend .
-    - docker build -t $REPO/frontend:$TAG -f devOps/Dockerfile.frontend .
-  only:
-    - main
-
-push_images:
-  stage: push
-  script:
-    - docker push $REPO/db:$TAG
-    - docker push $REPO/api:$TAG
-    - docker push $REPO/frontend:$TAG
-  only:
-    - main
-
-deploy:
+deploy_manual_job:
   stage: deploy
-  environment: production
+  image: alpine:latest  # lightweight image with SSH
+  before_script:
+    - apk update && apk add --no-cache openssh-client sshpass git
+
+  script:
+    - echo "Starting deployment on live server 118.34.2.38"
+    - mkdir -p ~/.ssh
+    - |
+      echo -e "Host live-server\n  HostName 118.34.2.38\n  Port 23\n  User devops" > ~/.ssh/config
+    - chmod 600 ~/.ssh/config
+    - |
+      sshpass -p "shm_server_pwd" ssh -o StrictHostKeyChecking=no devops@118.34.2.38 -p 23 "
+        mkdir -p /home/hsmdevops/test-ci-cd
+        cd /home/hsmdevops/test-ci-cd
+        echo 'Cloning repository using GitLab access token...'
+        git clone -b main https://oauth2:${token}@gitlab.com/cicd/pipeline/test-mero-store.git . || true
+        echo 'Building & starting Docker containers...'
+        docker-compose -f docker-compose.yml up -d --build
+        echo 'Checking container status...'
+        docker ps -a | grep -E 'CONTAINER/test-mero-store'
+        echo 'Displaying recent logs...'
+        docker compose logs --tail=50
+        echo 'Deployment completed and cleanup done on live server.'
+      "
+
   only:
     - main
-  script:
-    - echo "$SSH_PRIVATE_KEY" > private_key && chmod 600 private_key
-    - ssh -i private_key -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST <<EOF
-        cd /home/$DEPLOY_USER/lms-project
-        git pull origin main
-        docker compose -f devOps/docker-compose.yml down
-        docker compose -f devOps/docker-compose.yml pull
-        docker compose -f devOps/docker-compose.yml up -d --build
-        docker system prune -f
-      EOF
+
+  when: manual
