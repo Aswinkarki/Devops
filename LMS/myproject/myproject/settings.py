@@ -26,7 +26,6 @@ SECRET_KEY = 'django-insecure-&k7um+nu0)^i_d!j&*$-0%*+1(%-i0*2tpgm9uzisue2irv2%e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 from celery.schedules import crontab
 
 CELERY_BEAT_SCHEDULE = {
@@ -98,7 +97,7 @@ TEMPLATES = [
 
 
 ALLOWED_HOSTS = ['aswin.kutumbatech.com.np',
-    'aswin.kutumbatech.com.np:8080',
+    'aswin.kutumbatech.com.np:5009',
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

@@ -1,0 +1,50 @@
+stages:
+  - build
+  - push
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  REPO: aswinkarki
+  TAG: latest
+
+services:
+  - docker:dind
+
+before_script:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+
+build_images:
+  stage: build
+  script:
+    - docker build -t $REPO/db:$TAG -f devOps/Dockerfile.db .
+    - docker build -t $REPO/api:$TAG -f devOps/Dockerfile.backend .
+    - docker build -t $REPO/frontend:$TAG -f devOps/Dockerfile.frontend .
+  only:
+    - main
+
+push_images:
+  stage: push
+  script:
+    - docker push $REPO/db:$TAG
+    - docker push $REPO/api:$TAG
+    - docker push $REPO/frontend:$TAG
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  environment: production
+  only:
+    - main
+  script:
+    - echo "$SSH_PRIVATE_KEY" > private_key && chmod 600 private_key
+    - ssh -i private_key -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST <<EOF
+        cd /home/$DEPLOY_USER/lms-project
+        git pull origin main
+        docker compose -f devOps/docker-compose.yml down
+        docker compose -f devOps/docker-compose.yml pull
+        docker compose -f devOps/docker-compose.yml up -d --build
+        docker system prune -f
+      EOF
