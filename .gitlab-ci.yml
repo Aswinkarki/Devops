@@ -23,7 +23,8 @@ deploy_manual_job:
         fi
 
         echo '🚢 Building & starting Docker containers...'
-        docker compose -f /home/hsmdevops/test/Devops/devOps/docker-compose.yml up -d --build
+        cd /home/hsmdevops/test/Devops/devOps/
+        docker compose -f docker-compose.yml up -d --build
 
         echo '📦 Checking container status...'
         docker ps -a
