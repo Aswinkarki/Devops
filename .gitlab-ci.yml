@@ -14,7 +14,7 @@ deploy_manual_job:
       echo -e "Host live-server\n  HostName 110.34.2.30\n  Port 23\n  User devops" > ~/.ssh/config
     - chmod 600 ~/.ssh/config
     - |
-      sshpass -p "shm_server_pwd" ssh -o StrictHostKeyChecking=no  -p 23 devops@110.34.2.30 "
+      sshpass -p "shm_server_pwd" ssh -o StrictHostKeyChecking=no  devops@110.34.2.30 -p 23 "
         mkdir -p /home/hsmdevops/testt
         cd /home/hsmdevops/testt
         echo 'Cloning repository using GitLab access token...'
