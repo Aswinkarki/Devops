@@ -8,13 +8,13 @@ deploy_manual_job:
     - apk update && apk add --no-cache openssh-client sshpass git
 
   script:
-    - echo "Starting deployment on live server 118.34.2.38"
+    - echo "Starting deployment on live server 110.34.2.30"
     - mkdir -p ~/.ssh
     - |
       echo -e "Host live-server\n  HostName 118.34.2.38\n  Port 23\n  User devops" > ~/.ssh/config
     - chmod 600 ~/.ssh/config
     - |
-      sshpass -p "shm_server_pwd" ssh -o StrictHostKeyChecking=no devops@118.34.2.38 -p 23 "
+      sshpass -p "shm_server_pwd" ssh -o StrictHostKeyChecking=no devops@110.34.2.30 -p 23 "
         mkdir -p /home/hsmdevops/testt
         cd /home/hsmdevops/testt
         echo 'Cloning repository using GitLab access token...'
