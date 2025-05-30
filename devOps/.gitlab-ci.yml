@@ -15,14 +15,14 @@ deploy_manual_job:
     - chmod 600 ~/.ssh/config
     - |
       sshpass -p "shm_server_pwd" ssh -o StrictHostKeyChecking=no devops@118.34.2.38 -p 23 "
-        mkdir -p /home/hsmdevops/test-ci-cd
-        cd /home/hsmdevops/test-ci-cd
+        mkdir -p /home/hsmdevops/testt
+        cd /home/hsmdevops/testt
         echo 'Cloning repository using GitLab access token...'
-        git clone -b main https://oauth2:${token}@gitlab.com/cicd/pipeline/test-mero-store.git . || true
+        git clone -b main https://oauth2:${GITLAB_PAT}@gitlab.com/aswinkarki-group/Devops.git . || true
         echo 'Building & starting Docker containers...'
         docker-compose -f docker-compose.yml up -d --build
         echo 'Checking container status...'
-        docker ps -a | grep -E 'CONTAINER/test-mero-store'
+        docker ps -a 
         echo 'Displaying recent logs...'
         docker compose logs --tail=50
         echo 'Deployment completed and cleanup done on live server.'
