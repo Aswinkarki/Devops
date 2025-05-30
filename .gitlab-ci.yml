@@ -23,13 +23,13 @@ deploy_manual_job:
         fi
 
         echo '🚢 Building & starting Docker containers...'
-        docker compose -f docker-compose.yml up -d --build
+        docker compose -f Devops/devOps/docker-compose.yml up -d --build
 
         echo '📦 Checking container status...'
         docker ps -a
 
         echo '📄 Displaying recent logs...'
-        docker compose logs --tail=50 || true
+        docker compose -f Devops/devOps/docker-compose.yml logs --tail=50 || true
 
         echo '✅ Deployment completed and cleanup done on live server.'
       "
