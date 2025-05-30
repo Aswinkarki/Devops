@@ -23,7 +23,7 @@ deploy_manual_job:
         fi
 
         echo '🚢 Building & starting Docker containers...'
-        cd /home/hsmdevops/test/Devops/devOps/
+        cd /home/hsmdevops/test/devOps/
         docker compose -f docker-compose.yml up -d --build
 
         echo '📦 Checking container status...'
