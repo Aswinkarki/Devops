@@ -11,7 +11,7 @@ deploy_manual_job:
     - echo "Starting deployment on live server 110.34.2.30"
     - mkdir -p ~/.ssh
     - |
-      echo -e "Host live-server\n  HostName 118.34.2.38\n  Port 23\n  User devops" > ~/.ssh/config
+      echo -e "Host live-server\n  HostName 110.34.2.30\n  Port 23\n  User devops" > ~/.ssh/config
     - chmod 600 ~/.ssh/config
     - |
       sshpass -p "shm_server_pwd" ssh -o StrictHostKeyChecking=no  -p 23 devops@110.34.2.30 "
