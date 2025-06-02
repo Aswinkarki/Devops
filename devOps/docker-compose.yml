@@ -153,7 +153,7 @@ services:
     image: nginx:stable
     container_name: aswin_gateway
     ports:
-      - "5009:80"
+      - "80:80"
     networks:
       lms_net:
         ipv4_address: 172.27.0.5
